@@ -29,17 +29,19 @@ def difference(img1: Image.Image, img2: Image.Image) -> float:
 def explore_directory(path: Path) -> None:
     """Find images in a directory and compare them all."""
 
-    files = list(path.glob("*.jpg")) + list(path.glob("*.jpeg")) + list(path.glob("*.png"))
+    files = (
+        list(path.glob("*.jpg")) + list(path.glob("*.jpeg")) + list(path.glob("*.png"))
+    )
     diffs = {}
 
-    for file1, file2 in product(files, repeat=2):
-        key = tuple(sorted([str(file1), str(file2)]))
-        if key in diffs or key[0] == key[1]:
+    summaries = [(file, summarise(Image.open(file))) for file in files]
+
+    for (f1, sum1), (f2, sum2) in product(summaries, repeat=2):
+        key = tuple(sorted([str(f1), str(f2)]))
+        if f1 == f2 or key in diffs:
             continue
 
-        small1 = summarise(Image.open(file1))
-        small2 = summarise(Image.open(file2))
-        diff = difference(small1, small2)
+        diff = difference(sum1, sum2)
         print(key, diff)
         diffs[key] = diff
 
