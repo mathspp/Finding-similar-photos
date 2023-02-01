@@ -1,7 +1,6 @@
 from itertools import product
 from pathlib import Path
 
-
 from PIL import Image, ImageChops
 
 
@@ -20,10 +19,11 @@ def difference(img1: Image.Image, img2: Image.Image) -> float:
     width, height = diff.size
     for w, h in product(range(width), range(height)):
         r, g, b = diff.getpixel((w, h))
-        acc += (r + g + b) / 3 / 255
+        acc += (r + g + b) / 3
 
-    diff = acc / (width * height)
-    return diff
+    average_diff = acc / (width * height)
+    normalised_diff = average_diff / 255
+    return normalised_diff
 
 
 def explore_directory(path: Path) -> None:
